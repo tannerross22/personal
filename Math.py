@@ -25,7 +25,9 @@ burn_time = 31
 gradient = fuel/burn_time
 velocity = 0
 drag = 0
-area = 0.0081
+# Pretty sure that this is wrong. 3.5" is 0.0889 m, so area should be closer to 0.025
+# area = 0.0081
+area = 0.025
 parea = 3.57
 pCd = 2.2
 Cd = 0.75
