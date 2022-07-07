@@ -96,11 +96,44 @@ while time < 10000:
         time += inc
         if altitude <= 0:
             break
-print(max(alt), max(vel), max(net), min(den))
+
 
 
 import matplotlib.pyplot as plt
-x= tim
-y= den
-plt.plot(x, y)
-plt.show()
+
+def show_density():
+    x = tim
+    y = den
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Density (kg/m^3)")
+    plt.show()
+
+def show_altitude():
+    x = tim
+    y = alt
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Altitude (m)")
+    plt.show()
+
+def show_thrust():
+    x = tim
+    y = thr
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Thrust (N)")
+    plt.show()  
+
+def print_maxes():
+    print("--- Maxes ---")
+    print(f"Max Altitude: {max(alt):.0f} m")
+    print(f"Max Velocity: {max(vel):.0f} m/s")
+    print(f"Max Net Force: {max(net):.0f} N")
+    print(f"Max Density: {max(den):.2f} kg/m^3")
+
+
+print_maxes()
+# show_density()
+# show_thrust()
+show_altitude()
