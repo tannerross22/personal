@@ -6,7 +6,8 @@ import numpy as np
 print(thrust)
 
 def Thrust(time):
-    return thrust[thrust["Time"] <= time].loc[-1]["Corrected Thrust"]
+
+    return thrust[thrust["Time"] <= time].iloc[-1]["Corrected Thrust"]
 
 
 def air_density(altitude):
@@ -52,12 +53,15 @@ def thrustactive(burn_time):
 
 tim = []
 den = []
+thr = []
 alt = []
 vel = []
 net = []
 
 while time < 10000:
     density = air_density(altitude)
+    avg = Thrust(time)
+    thr.append(avg)
     tim.append(time)
     alt.append(altitude)
     vel.append(velocity)
