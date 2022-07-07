@@ -6,7 +6,8 @@ import numpy as np
 print(thrust)
 
 def Thrust(time):
-    return thrust[thrust["Time"] <= time].loc[-1]["Corrected Thrust"]
+
+    return thrust[thrust["Time"] <= time].iloc[-1]["Corrected Thrust"]
 
 
 def air_density(altitude):
@@ -24,7 +25,9 @@ burn_time = 31
 gradient = fuel/burn_time
 velocity = 0
 drag = 0
-area = 0.0081
+# Pretty sure that this is wrong. 3.5" is 0.0889 m, so area should be closer to 0.025
+# area = 0.0081
+area = 0.025
 parea = 3.57
 pCd = 2.2
 Cd = 0.75
@@ -52,12 +55,15 @@ def thrustactive(burn_time):
 
 tim = []
 den = []
+thr = []
 alt = []
 vel = []
 net = []
 
 while time < 10000:
     density = air_density(altitude)
+    avg = Thrust(time)
+    thr.append(avg)
     tim.append(time)
     alt.append(altitude)
     vel.append(velocity)
@@ -92,11 +98,44 @@ while time < 10000:
         time += inc
         if altitude <= 0:
             break
-print(max(alt), max(vel), max(net), min(den))
+
 
 
 import matplotlib.pyplot as plt
-x= tim
-y= den
-plt.plot(x, y)
-plt.show()
+
+def show_density():
+    x = tim
+    y = den
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Density (kg/m^3)")
+    plt.show()
+
+def show_altitude():
+    x = tim
+    y = alt
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Altitude (m)")
+    plt.show()
+
+def show_thrust():
+    x = tim
+    y = thr
+    plt.plot(x, y)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Thrust (N)")
+    plt.show()  
+
+def print_maxes():
+    print("--- Maxes ---")
+    print(f"Max Altitude: {max(alt):.0f} m")
+    print(f"Max Velocity: {max(vel):.0f} m/s")
+    print(f"Max Net Force: {max(net):.0f} N")
+    print(f"Max Density: {max(den):.2f} kg/m^3")
+
+
+print_maxes()
+# show_density()
+# show_thrust()
+show_altitude()
