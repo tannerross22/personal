@@ -1,9 +1,10 @@
-path = r'C: > Users > tanne > Documents >VScode > atmdata.csv'
 import pandas as pd
+import numpy as np
+
 atm = pd.read_csv("atmdata.csv")
 thrust = pd.read_csv("thrust.csv")
-import numpy as np
-print(thrust)
+Cd = pd.read_csv("RASaero.csv")
+
 
 def Thrust(time):
 
@@ -13,7 +14,8 @@ def Thrust(time):
 def air_density(altitude):
     return atm[atm["Altitude[m]"] <= altitude].iloc[-1]["Density[kg/m3]"]
 
-
+def CD(mach):
+    return Cd[Cd["Mach"] <= mach].iloc[-1]["CD"]
 
 time = 0
 inc = 0.25
@@ -30,9 +32,10 @@ drag = 0
 area = 0.025
 parea = 3.57
 pCd = 2.2
-Cd = 0.75
 altitude = 0
 density = air_density(altitude)
+mach = velocity/density
+D = CD(mach)
 avg = Thrust(time)
 
 if net_force == 0:
@@ -53,12 +56,14 @@ def thrustactive(burn_time):
         return False
 
 
+
 tim = []
 den = []
 thr = []
 alt = []
 vel = []
 net = []
+mac = []
 
 while time < 10000:
     density = air_density(altitude)
@@ -69,18 +74,20 @@ while time < 10000:
     vel.append(velocity)
     net.append(net_force)
     den.append(density)
+    mac.append(velocity/density)
     if thrustactive(burn_time) is True:
         wet = wet - (gradient*inc)
-        drag = 1/2*area*Cd*density*velocity**2
+        drag = 1/2*area*D*density*velocity**2
         net_force = avg - wet*gravity - drag
         acceleration = net_force/wet
         velocity = velocity + acceleration*inc
         altitude = (velocity * inc + (1 / 2 * acceleration * inc ** 2)) + altitude
+        mach = velocity/density
         time += inc
         # print(altitude, velocity, net_force)
     elif time >= burn_time and parachute(altitude) is False:
         avg = 0
-        drag = 1 / 2 * area * Cd * density * velocity ** 2
+        drag = 1 / 2 * area * D * density * velocity ** 2
         net_force = wet*gravity - drag
         acceleration = net_force / wet
         altitude = (velocity * inc + (1 / 2 * acceleration * inc ** 2)) + altitude
@@ -132,10 +139,11 @@ def print_maxes():
     print(f"Max Altitude: {max(alt):.0f} m")
     print(f"Max Velocity: {max(vel):.0f} m/s")
     print(f"Max Net Force: {max(net):.0f} N")
-    print(f"Max Density: {max(den):.2f} kg/m^3")
+    print(f"Min Density: {min(den):.4f} kg/m^3")
 
 
 print_maxes()
 # show_density()
 # show_thrust()
 show_altitude()
+show_density()
